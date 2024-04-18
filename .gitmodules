@@ -1,0 +1,3 @@
+[submodule "extern/fox-engine"]
+	path = extern/fox-engine
+	url = https://github.com/realchrismartin/fox-engine
