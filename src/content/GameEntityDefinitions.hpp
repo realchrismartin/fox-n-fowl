@@ -15,9 +15,9 @@ enum class GameEntityEnum
 struct GameEntityConfig;
 
 //To add a new game entity:
-// 0) Update GameEntityEnum.hpp to add an ID for your game entity
+// 0) Update GameEntityEnum to add an ID for your game entity
 // 1) Add a static GameEntityConfig variable for your enum to the GameEntities namespace in GameEntityDefinitions.cpp
-// 2) Add a mapping in getGameEntityConfig() for your enum to the variable created in #1
+// 2) Add a mapping in get() for your enum to the variable created in #1
 
 namespace GameEntityDefinitions
 {
