@@ -1,4 +1,4 @@
-#include "src/libraries/GameEntityLibrary.hpp"
+#include "src/libraries/GameEntityDefinitions.hpp"
 
 #include "src/entities/GameEntityConfig.hpp"
 #include "src/components/ComponentPool.hpp"
@@ -206,7 +206,7 @@ namespace GameEntities
 		});
 }
 
-const GameEntityConfig& GameEntityLibrary::get(GameEntityEnum gameEntity)
+const GameEntityConfig& GameEntityDefinitions::get(GameEntityEnum gameEntity)
 {
 	switch (gameEntity)
 	{

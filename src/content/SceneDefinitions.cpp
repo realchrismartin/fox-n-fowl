@@ -1,5 +1,5 @@
-#include "src/libraries/SceneLibrary.hpp"
-#include "src/libraries/GameEntityLibrary.hpp"
+#include "src/content/SceneDefinitions.hpp"
+#include "src/content/GameEntityDefinitions.hpp"
 
 #include "src/scenes/SceneConfig.hpp"
 #include "src/scenes/Scene.hpp"
@@ -18,15 +18,15 @@
 
 namespace Scenes
 {
-	static const SceneConfig MAIN_MENU = SceneLibrary::initSceneConfig(SceneEnum::MAIN_MENU);
-	static const SceneConfig LEVEL_1 = SceneLibrary::initSceneConfig(SceneEnum::LEVEL_1);
+	static const SceneConfig MAIN_MENU = SceneDefinitions::initSceneConfig(SceneEnum::MAIN_MENU);
+	static const SceneConfig LEVEL_1 = SceneDefinitions::initSceneConfig(SceneEnum::LEVEL_1);
 }
 
 /// @brief Get a statically allocated scene configuration. This will be called from Scene:: when a new scene is requested.
 /// @brief It will always return a reference to the single statically allocated config for the scene enum specified.
 /// @param scene 
 /// @return 
-const SceneConfig& SceneLibrary::get(SceneEnum scene)
+const SceneConfig& SceneDefinitions::get(SceneEnum scene)
 {
 	switch (scene)
 	{
@@ -42,7 +42,7 @@ const SceneConfig& SceneLibrary::get(SceneEnum scene)
 /// @brief Define your scene's contents here!
 /// @param scene 
 /// @return 
-const SceneConfig SceneLibrary::initSceneConfig(SceneEnum scene)
+const SceneConfig SceneDefinitions::initSceneConfig(SceneEnum scene)
 {
 	SceneConfig config;
 
@@ -51,28 +51,28 @@ const SceneConfig SceneLibrary::initSceneConfig(SceneEnum scene)
 	case(SceneEnum::LEVEL_1):
 	{
 		//Player
-		auto player = config.addEntity(GameEntityLibrary::get(GameEntityEnum::PLAYER));
+		auto player = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::PLAYER));
 		player.addInitFn([](int entityUID, auto& scene)
 		{
 			scene.getComponent<TransformComponent>(entityUID).setTranslation({ 0.f,5.f,0.f });
 		});
 
 		//Floor
-		auto floor = config.addEntity(GameEntityLibrary::get(GameEntityEnum::FLOOR));
+		auto floor = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::FLOOR));
 		floor.addInitFn([](int entityUID, Scene& scene)
 		{
 			scene.getComponent<TransformComponent>(entityUID).setTranslation({ 0.f,-2.f,0.f });
 		});
 
 		//Bush
-		auto bush = config.addEntity(GameEntityLibrary::get(GameEntityEnum::BUSH));
+		auto bush = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::BUSH));
 		bush.addInitFn([](int entityUID, Scene& scene)
 		{
 			scene.getComponent<TransformComponent>(entityUID).setTranslation({ 10.f,0.f,5.f });
 		});
 
 		//Mushroom
-		auto mushroom1 = config.addEntity(GameEntityLibrary::get(GameEntityEnum::MUSHROOM));
+		auto mushroom1 = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::MUSHROOM));
 		mushroom1.addInitFn([](int entityUID, Scene& scene)
 		{
 			scene.getComponent<TransformComponent>(entityUID).setTranslation({ 10.f,0.f,5.f });
@@ -80,13 +80,13 @@ const SceneConfig SceneLibrary::initSceneConfig(SceneEnum scene)
 		});
 
 		//Another mushroom
-		auto mushroom2 = config.addEntity(GameEntityLibrary::get(GameEntityEnum::MUSHROOM));
+		auto mushroom2 = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::MUSHROOM));
 		mushroom2.addInitFn([](int entityUID, Scene& scene)
 		{
 			scene.getComponent<TransformComponent>(entityUID).setTranslation({ 0.f,0.f,10.f });
 		});
 
-		auto emitter = config.addEntity(GameEntityLibrary::get(GameEntityEnum::BLOCK_EMITTER));
+		auto emitter = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::BLOCK_EMITTER));
 		emitter.addInitFn([](int entityUID, Scene& scene)
 		{
 			scene.getComponent<TransformComponent>(entityUID).setTranslation({ 0.f,2.f,0.f });
@@ -98,14 +98,19 @@ const SceneConfig SceneLibrary::initSceneConfig(SceneEnum scene)
 	case(SceneEnum::MAIN_MENU):
 	{
 		//Title
-		auto title = config.addEntity(GameEntityLibrary::get(GameEntityEnum::BUTTON));
+		auto title = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::BUTTON));
 		title.addInitFn([](int entityUID, Scene& scene)
 		{
-			scene.getComponent<TransformComponent>(entityUID).setTranslation({0.f,.5f,0.f });
+			TextConfig config;
+			config.textToDisplay = "fox n fowl";
+			config.centered = true;
+			config.margin = { .05f,.05f };
+			config.fontSize = 20;
+			scene.loadText(config, entityUID);
 		});
 
 		//Start button
-		auto startButton = config.addEntity(GameEntityLibrary::get(GameEntityEnum::BUTTON));
+		auto startButton = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::BUTTON));
 		startButton.addInitFn([](int entityUID, Scene& scene)
 		{
 				//NB: right now this button loads its text twice since default buttons start with text. Maybe we dont want that?
@@ -149,14 +154,14 @@ const SceneConfig SceneLibrary::initSceneConfig(SceneEnum scene)
 					std::cout << "Clicked on the start button in a manner of speaking, coords were " << coords.value().x << " " << coords.value().y << std::endl;
 				}
 
-				scene.changeScene(SceneLibrary::get(SceneEnum::LEVEL_1));
+				scene.changeScene(SceneDefinitions::get(SceneEnum::LEVEL_1));
 			});
 
 			triggerComponent.addTrigger(trigger);
 		});
 
 		//Floor
-		auto floor = config.addEntity(GameEntityLibrary::get(GameEntityEnum::FLOOR));
+		auto floor = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::FLOOR));
 		floor.addInitFn([](int entityUID, Scene& scene)
 		{
 			scene.getComponent<TransformComponent>(entityUID).setScale({ 1000.f,1000.f,1.f });
