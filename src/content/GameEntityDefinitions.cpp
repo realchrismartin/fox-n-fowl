@@ -1,4 +1,4 @@
-#include "src/libraries/GameEntityDefinitions.hpp"
+#include "src/content/GameEntityDefinitions.hpp"
 
 #include "src/entities/GameEntityConfig.hpp"
 #include "src/components/ComponentPool.hpp"
@@ -95,7 +95,7 @@ namespace GameEntities
 
 			//The emitter itself
 			ModelConfig model;
-			model.keyframeFilePaths = { "../../img/cube.obj" };
+			model.keyframeFilePaths = { "../img/cube.obj" };
 			model.spriteOffsetOnTexture = { 1000,1000 };
 			scene.loadModel(model, entityUID);
 
