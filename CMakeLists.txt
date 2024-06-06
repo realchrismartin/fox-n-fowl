@@ -1,4 +1,4 @@
-﻿cmake_minimum_required (VERSION 3.8)
+﻿cmake_minimum_required (VERSION 3.16)
 set (CMAKE_CXX_STANDARD 20)
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -27,5 +27,7 @@ target_include_directories(FnF PUBLIC "${CMAKE_SOURCE_DIR}" "${CMAKE_SOURCE_DIR}
 set(DEPEND_LIBRARIES
     FOX_ENGINE_LIB
 )
+
+target_precompile_headers(FnF PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/pch.hpp")
 
 target_link_libraries(FnF PRIVATE ${DEPEND_LIBRARIES})

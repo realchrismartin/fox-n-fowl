@@ -9,7 +9,8 @@ enum class GameEntityEnum
 	FLOOR,
 	BUSH,
 	MUSHROOM,
-	BLOCK_EMITTER
+	BLOCK_EMITTER,
+	HEDGE
 };
 
 struct GameEntityConfig;

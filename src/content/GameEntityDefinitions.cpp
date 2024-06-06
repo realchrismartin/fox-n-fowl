@@ -42,8 +42,18 @@ namespace GameEntities
 		{
 			scene.addComponent<InputComponent>(entityUID);
 
+   /*
 			ModelConfig model;
 			scene.loadModel(model, entityUID);
+            */
+
+			ModelConfig model;
+			model.spriteSize = { 32,32 };
+			model.spriteOffsetOnTexture = { 0,1728 };
+			model.keyframeFilePaths = { "../img/tree_1.obj" };
+
+			scene.loadModel(model, entityUID);
+			scene.getComponent<TransformComponent>(entityUID).setScale({ 2.f,2.f,2.f});
 		});
 
 	static const GameEntityConfig FLOOR = GameEntityConfig()
@@ -69,7 +79,17 @@ namespace GameEntities
 			scene.loadModel(model, entityUID);
 			scene.getComponent<TransformComponent>(entityUID).setScale({ 2.f,2.f,2.f});
 		});
+	static const GameEntityConfig HEDGE = GameEntityConfig()
+		.whenInit([](int entityUID, auto& scene)
+		{
+			ModelConfig model;
+			model.spriteSize = { 512,512 };
+			model.spriteOffsetOnTexture = { 0,1248 };
+			model.keyframeFilePaths = { "../img/HedgeSmall.obj" };
 
+			scene.loadModel(model, entityUID);
+			scene.getComponent<TransformComponent>(entityUID).setScale({ .2f,.2f,.2f});
+		});
 	static const GameEntityConfig MUSHROOM = GameEntityConfig()
 		.whenInit([](int entityUID, auto& scene)
 		{
@@ -224,6 +244,8 @@ const GameEntityConfig& GameEntityDefinitions::get(GameEntityEnum gameEntity)
 			return GameEntities::MUSHROOM;
 		case(GameEntityEnum::BLOCK_EMITTER):
 			return GameEntities::BLOCK_EMITTER;
+		case(GameEntityEnum::HEDGE):
+			return GameEntities::HEDGE;
 		default:
 			return GameEntities::BUSH; //quote unqoute
 	}
