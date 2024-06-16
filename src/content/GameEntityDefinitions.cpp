@@ -67,6 +67,17 @@ namespace GameEntities
 			scene.loadModel(model, entityUID);
 			scene.getComponent<TransformComponent>(entityUID).setScale({ 100.f,1.f,100.f });
 		});
+	static const GameEntityConfig BACKGROUND = GameEntityConfig()
+		.whenInit([](int entityUID, auto& scene)
+		{
+			ModelConfig model;
+			model.spriteSize = { 10,10 };
+			model.spriteOffsetOnTexture = { 36,1756 };
+			model.keyframeFilePaths = { "../img/cube.obj" };
+
+			scene.loadModel(model, entityUID);
+			scene.getComponent<TransformComponent>(entityUID).setScale({ 100.f,100.f,1.f });
+		});
 
 	static const GameEntityConfig BUSH = GameEntityConfig()
 		.whenInit([](int entityUID, auto& scene)
@@ -79,16 +90,38 @@ namespace GameEntities
 			scene.loadModel(model, entityUID);
 			scene.getComponent<TransformComponent>(entityUID).setScale({ 2.f,2.f,2.f});
 		});
-	static const GameEntityConfig HEDGE = GameEntityConfig()
+	static const GameEntityConfig TREE_1 = GameEntityConfig()
 		.whenInit([](int entityUID, auto& scene)
 		{
 			ModelConfig model;
-			model.spriteSize = { 512,512 };
-			model.spriteOffsetOnTexture = { 0,1248 };
-			model.keyframeFilePaths = { "../img/HedgeSmall.obj" };
+			model.spriteSize = { 32,32 };
+			model.spriteOffsetOnTexture = { 0,1728 };
+			model.keyframeFilePaths = { "../img/tree_1.obj" };
 
 			scene.loadModel(model, entityUID);
-			scene.getComponent<TransformComponent>(entityUID).setScale({ .2f,.2f,.2f});
+			scene.getComponent<TransformComponent>(entityUID).setScale({ 2.f,2.f,2.f});
+		});
+	static const GameEntityConfig TREE_2 = GameEntityConfig()
+		.whenInit([](int entityUID, auto& scene)
+		{
+			ModelConfig model;
+			model.spriteSize = { 32,32 };
+			model.spriteOffsetOnTexture = { 0,1728 };
+			model.keyframeFilePaths = { "../img/tree_2.obj" };
+
+			scene.loadModel(model, entityUID);
+			scene.getComponent<TransformComponent>(entityUID).setScale({ 2.f,2.f,2.f});
+		});
+	static const GameEntityConfig LOG = GameEntityConfig()
+		.whenInit([](int entityUID, auto& scene)
+		{
+			ModelConfig model;
+			model.spriteSize = { 32,32 };
+			model.spriteOffsetOnTexture = { 0,1728 };
+			model.keyframeFilePaths = { "../img/log.obj" };
+
+			scene.loadModel(model, entityUID);
+			scene.getComponent<TransformComponent>(entityUID).setScale({ 2.f,2.f,2.f});
 		});
 	static const GameEntityConfig MUSHROOM = GameEntityConfig()
 		.whenInit([](int entityUID, auto& scene)
@@ -106,17 +139,17 @@ namespace GameEntities
 			};
 
 			scene.loadModel(model, entityUID);
-			scene.getComponent<TransformComponent>(entityUID).setScale({ 2.f,2.f,2.f});
+			scene.getComponent<TransformComponent>(entityUID).setScale({ .5f,.5f,.5f});
 		});
 
 	static const GameEntityConfig BLOCK_EMITTER = GameEntityConfig()
 		.whenInit([](int entityUID, auto& scene)
 		{
-
 			//The emitter itself
 			ModelConfig model;
-			model.keyframeFilePaths = { "../img/cube.obj" };
-			model.spriteOffsetOnTexture = { 1000,1000 };
+			model.spriteSize = { 32,32 };
+			model.spriteOffsetOnTexture = { 0,1728 };
+			model.keyframeFilePaths = { "../img/log.obj" };
 			scene.loadModel(model, entityUID);
 
 			//Reuse the model for da emitted stuff
@@ -126,10 +159,12 @@ namespace GameEntities
 				"../img/cube.obj",
 			};
 
+			scene.getComponent<TransformComponent>(entityUID).setScale({ 2.f,2.f,2.f});
+
 			float visibleDuration = 5.f;
 
 			//The stuff that get emitted
-			for (int i = 0; i < 20; i++)
+			for (int i = 0; i < 40; i++)
 			{
 				float startDelay = i * ((((rand() % 2) + 1) * .15f) + .15f);
 
@@ -142,7 +177,7 @@ namespace GameEntities
 				
 				//Small mushrooms
 				scene.loadModel(model, id.value());
-				scene.getComponent<TransformComponent>(id.value()).setScale({ .2f,.2f,.2f });
+				scene.getComponent<TransformComponent>(id.value()).setScale({ .05f,.05f,.05f });
 
 				//Add this cube as a child of the emitter
 				scene.addChild(entityUID, id.value());
@@ -244,8 +279,14 @@ const GameEntityConfig& GameEntityDefinitions::get(GameEntityEnum gameEntity)
 			return GameEntities::MUSHROOM;
 		case(GameEntityEnum::BLOCK_EMITTER):
 			return GameEntities::BLOCK_EMITTER;
-		case(GameEntityEnum::HEDGE):
-			return GameEntities::HEDGE;
+		case(GameEntityEnum::TREE_1):
+			return GameEntities::TREE_1;
+		case(GameEntityEnum::TREE_2):
+			return GameEntities::TREE_2;
+		case(GameEntityEnum::LOG):
+			return GameEntities::LOG;
+		case(GameEntityEnum::BACKGROUND):
+			return GameEntities::BACKGROUND;
 		default:
 			return GameEntities::BUSH; //quote unqoute
 	}

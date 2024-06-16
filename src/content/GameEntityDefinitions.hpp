@@ -7,10 +7,13 @@ enum class GameEntityEnum
 	BUTTON,
 	PLAYER,
 	FLOOR,
+	BACKGROUND,
 	BUSH,
 	MUSHROOM,
 	BLOCK_EMITTER,
-	HEDGE
+	TREE_1,
+	TREE_2,
+	LOG
 };
 
 struct GameEntityConfig;
