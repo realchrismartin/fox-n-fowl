@@ -52,12 +52,26 @@ namespace GameEntities
 			scene.addComponent<InputComponent>(entityUID);
 
 			ModelConfig model;
-			model.spriteSize = { 32,32 };
-			model.spriteOffsetOnTexture = { 0,1728 };
-			model.keyframeFilePaths = { "../img/tree_1.obj" };
+			model.spriteSize = { 410,410 };
+			model.spriteOffsetOnTexture = { 2090,0 };
+			model.keyframeFilePaths = {
+				"../img/racc/racc0.obj",
+				"../img/racc/racc5.obj" ,
+				"../img/racc/racc10.obj" ,
+				"../img/racc/racc15.obj" ,
+				"../img/racc/racc20.obj" ,
+				"../img/racc/racc25.obj" ,
+				"../img/racc/racc30.obj" ,
+				"../img/racc/racc35.obj" ,
+				"../img/racc/racc40.obj" ,
+				"../img/racc/racc45.obj" ,
+				"../img/racc/racc50.obj" ,
+				"../img/racc/racc55.obj" 
+			};
 
 			scene.loadModel(model, entityUID);
 			scene.getComponent<TransformComponent>(entityUID).setScale({ 2.f,2.f,2.f});
+			scene.addComponent<InputComponent>(entityUID);
 		});
 
 	static const GameEntityConfig FLOOR = GameEntityConfig()
