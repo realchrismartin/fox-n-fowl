@@ -69,18 +69,18 @@ namespace GameEntities
 			model.keyframeFilePaths = { "../img/cube.obj" };
 
 			scene.loadModel(model, entityUID);
-			scene.getComponent<TransformComponent>(entityUID).setScale({ 100.f,1.f,100.f });
+			scene.getComponent<TransformComponent>(entityUID).setScale({ 100.f,100.f,100.f });
 		});
-	static const GameEntityConfig BACKGROUND = GameEntityConfig()
+	static const GameEntityConfig SKYBOX = GameEntityConfig()
 		.whenInit([](int entityUID, auto& scene)
 		{
 			ModelConfig model;
-			model.spriteSize = { 10,10 };
-			model.spriteOffsetOnTexture = { 36,1756 };
+			model.spriteSize = { 8,8 };
+			model.spriteOffsetOnTexture = { 36,1751 };
 			model.keyframeFilePaths = { "../img/cube.obj" };
 
 			scene.loadModel(model, entityUID);
-			scene.getComponent<TransformComponent>(entityUID).setScale({ 100.f,100.f,1.f });
+			scene.getComponent<TransformComponent>(entityUID).setScale({ 100.f,100.f,100.f });
 		});
 
 	static const GameEntityConfig BUSH = GameEntityConfig()
@@ -406,8 +406,8 @@ const GameEntityConfig& GameEntityDefinitions::get(GameEntityEnum gameEntity)
 			return GameEntities::TREE_2;
 		case(GameEntityEnum::LOG):
 			return GameEntities::LOG;
-		case(GameEntityEnum::BACKGROUND):
-			return GameEntities::BACKGROUND;
+		case(GameEntityEnum::SKYBOX):
+			return GameEntities::SKYBOX;
 		case(GameEntityEnum::INVISIBLE_ENTITY):
 		return GameEntities::INVISIBLE_ENTITY;
 		default:

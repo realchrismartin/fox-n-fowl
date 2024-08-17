@@ -62,14 +62,13 @@ const SceneConfig SceneDefinitions::initSceneConfig(SceneEnum scene)
 		auto floor = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::FLOOR));
 		floor.addInitFn([](int entityUID, Scene& scene)
 		{
-			scene.getComponent<TransformComponent>(entityUID).setTranslation({ 0.f,-4.f,0.f });
+			scene.getComponent<TransformComponent>(entityUID).setTranslation({ 0.f,-55.f,0.f });
 		});
 
-		//Background
-		auto background = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::BACKGROUND));
-		background.addInitFn([](int entityUID, Scene& scene)
+		auto skybox= config.addEntity(GameEntityDefinitions::get(GameEntityEnum::SKYBOX));
+		skybox.addInitFn([](int entityUID, Scene& scene)
 		{
-			scene.getComponent<TransformComponent>(entityUID).setTranslation({ 0.f,-4.f,-20.f });
+			scene.getComponent<TransformComponent>(entityUID).setTranslation({ 0.f,-8.f,-20.f });
 		});
 
 		//Campfire

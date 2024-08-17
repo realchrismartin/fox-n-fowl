@@ -7,7 +7,7 @@ enum class GameEntityEnum
 	BUTTON,
 	PLAYER,
 	FLOOR,
-	BACKGROUND,
+	SKYBOX,
 	BUSH,
 	MUSHROOM,
 	TREE_1,
