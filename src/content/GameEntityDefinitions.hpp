@@ -10,10 +10,12 @@ enum class GameEntityEnum
 	BACKGROUND,
 	BUSH,
 	MUSHROOM,
-	BLOCK_EMITTER,
 	TREE_1,
 	TREE_2,
-	LOG
+	LOG,
+	FIRE,
+	SMOKE,
+	INVISIBLE_ENTITY
 };
 
 struct GameEntityConfig;

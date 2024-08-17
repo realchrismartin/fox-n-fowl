@@ -57,13 +57,7 @@ const SceneConfig SceneDefinitions::initSceneConfig(SceneEnum scene)
 			scene.getComponent<TransformComponent>(entityUID).setTranslation({ 0.f,0.f,5.f });
 			scene.setCameraEntity(entityUID);
 		});
-		//Player
-		auto player = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::PLAYER));
-		player.addInitFn([](int entityUID, auto& scene)
-		{
-			scene.getComponent<TransformComponent>(entityUID).setTranslation({ 0.f,5.f,0.f });
-		});
-
+		
 		//Floor
 		auto floor = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::FLOOR));
 		floor.addInitFn([](int entityUID, Scene& scene)
@@ -78,46 +72,66 @@ const SceneConfig SceneDefinitions::initSceneConfig(SceneEnum scene)
 			scene.getComponent<TransformComponent>(entityUID).setTranslation({ 0.f,-4.f,-20.f });
 		});
 
-		auto emitter = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::BLOCK_EMITTER));
-		emitter.addInitFn([](int entityUID, Scene& scene)
+		//Campfire
+		auto campfire = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::INVISIBLE_ENTITY));
+		campfire.addInitFn([](int entityUID, Scene& scene)
 		{
-			scene.getComponent<TransformComponent>(entityUID).setTranslation({ 2.5f,-3.f,-5.f });
-			scene.getComponent<TransformComponent>(entityUID).setRotation({ 0.f,90.f,0.f});
+			scene.getComponent<TransformComponent>(entityUID).setScale({2.f,2.f,2.f});
+			scene.getComponent<TransformComponent>(entityUID).setTranslation({ 2.5f,-2.9f,-5.f });
 		});
 
 		auto log = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::LOG));
-		log.addInitFn([](int entityUID, Scene& scene)
+		log.addInitFn([campfire](int entityUID, Scene& scene)
 		{
-			scene.getComponent<TransformComponent>(entityUID).setTranslation({ 2.5f,-3.f,-5.f });
-			scene.getComponent<TransformComponent>(entityUID).setRotation({ 0.f,0.f,0.f });
+			scene.addChild(campfire.entityUID,entityUID);
+			scene.getComponent<TransformComponent>(entityUID).setRotation({ 0.f,15.f,180.f});
+			scene.getComponent<TransformComponent>(entityUID).setTranslation({ 0.f,-.3f,-.1f});
+		});
+
+		auto log2 = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::LOG));
+		log2.addInitFn([log](int entityUID, Scene& scene)
+		{
+			scene.addChild(log.entityUID,entityUID);
+			scene.getComponent<TransformComponent>(entityUID).setRotation({ 0.f,90.f,0.f});
+		});
+
+		auto fire = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::FIRE));
+		fire.addInitFn([campfire](int entityUID, Scene& scene)
+		{
+			scene.addChild(campfire.entityUID,entityUID);
+		});
+
+		auto smoke = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::SMOKE));
+		smoke.addInitFn([campfire](int entityUID, Scene& scene)
+		{
+			scene.addChild(campfire.entityUID,entityUID);
 		});
 
 		//Mushrooms
 		float x = -20.f;
-		float y = 0.f;
 
 		for(size_t i=0; i < 5; i++)
 		{
 			x += (((rand() % 3) * .3f) + 2.5f);
-			y = -3.f + (rand() % 2) * .1f; 
+			const float y = -3.f + (rand() % 2) * .1f; 
+			const float z = -4.f + (rand() % 2) * .1f; 
 
 			auto mushroom = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::MUSHROOM));
-			mushroom.addInitFn([x,y](int entityUID, Scene& scene)
+			mushroom.addInitFn([x,y,z](int entityUID, Scene& scene)
 			{
 				float scaleFactor = .5f + ((rand() % 2) * .15f);
-				scene.getComponent<TransformComponent>(entityUID).setTranslation({x,y,-4.f });
+				scene.getComponent<TransformComponent>(entityUID).setTranslation({x,y,z });
 				scene.getComponent<TransformComponent>(entityUID).setScale({scaleFactor,scaleFactor,scaleFactor});
 			});
 		}
 
 		//Trees
 		x = -25.f;
-		y = 0.f;
 
 		for(size_t i=0; i < 25; i++)
 		{
 			x += 3.5f + (rand() % 2) * .15f;
-			y = -3.f + (rand() % 2) * .5f; 
+			float y = -3.f + (rand() % 2) * .5f; 
 
 			auto tree = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::TREE_2));
 			tree.addInitFn([x,y](int entityUID, Scene& scene)
@@ -129,12 +143,11 @@ const SceneConfig SceneDefinitions::initSceneConfig(SceneEnum scene)
 		}
 
 		x = -25.f;
-		y = 0.f;
 
 		for(size_t i=0; i < 25; i++)
 		{
 			x += 3.f + (rand() % 2) * .15f;
-			y = -3.f + (rand() % 2) * .5f; 
+			float y = -3.f + (rand() % 2) * .5f; 
 
 			auto tree = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::TREE_2));
 			tree.addInitFn([x,y](int entityUID, Scene& scene)
