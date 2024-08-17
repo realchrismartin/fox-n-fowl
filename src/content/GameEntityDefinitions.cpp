@@ -30,7 +30,7 @@ namespace GameEntities
 			config.centered = true;
 			scene.loadText(config, entityUID);
 			config.margin = { .15f,.15f };
-			config.fontSize = 15;
+			config.fontSize = 5;
 			scene.loadText(config, entityUID);
 		});
 
@@ -40,7 +40,6 @@ namespace GameEntities
 			TextConfig config;
 			config.textToDisplay = "Default Button Text";
 			config.centered = true;
-			config.animated = true;
 			config.margin = { .05f,.05f };
 			config.fontSize = 5;
 			scene.loadText(config, entityUID);

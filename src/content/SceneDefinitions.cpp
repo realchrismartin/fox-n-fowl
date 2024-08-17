@@ -56,6 +56,77 @@ const SceneConfig SceneDefinitions::initSceneConfig(SceneEnum scene)
 			scene.getComponent<TransformComponent>(entityUID).setScale({.1f,.1f,.1f});
 			scene.getComponent<TransformComponent>(entityUID).setTranslation({ 0.f,0.f,5.f });
 			scene.setCameraEntity(entityUID);
+			scene.addComponent<TriggerComponent>(entityUID);
+
+			Trigger trigger;
+			trigger.setUpdateCondition([](Scene& scene, int entityUID, float lifetime, float elapsedTime)
+			{
+				auto cameraTargetEntity = scene.getCameraTargetEntity();
+
+				if(!cameraTargetEntity.has_value())
+				{
+					return false;
+				}
+
+				if(!scene.hasComponent<TransformComponent>(cameraTargetEntity.value()))
+				{
+					return false;
+				}
+
+				return true;
+			});
+			trigger.setAction([](Scene& scene, int entityUID)
+			{
+				auto cameraTargetEntity = scene.getCameraTargetEntity();
+
+				if(!cameraTargetEntity.has_value())
+				{
+					return;
+				}
+
+				if(!scene.hasComponent<TransformComponent>(cameraTargetEntity.value()))
+				{
+					return;
+				}
+
+				//Use the transforms to determine how far apart the camera is from its target
+				//NB: this assumes that neither the camera or the camera target are children in the scene graph - this should be fixed later
+				const glm::mat4& cameraWorldMat = scene.getComponent<TransformComponent>(entityUID).getWorldMatrix();
+				const glm::mat4& targetWorldMat = scene.getComponent<TransformComponent>(cameraTargetEntity.value()).getWorldMatrix();
+
+				glm::vec4 cameraCenter = glm::vec4(1.0);
+				glm::vec4 targetCenter = glm::vec4(1.0);
+
+				cameraCenter = cameraWorldMat * cameraCenter;
+				targetCenter = targetWorldMat * targetCenter;
+
+				glm::vec3 translation = glm::vec3(0.f,0.f,0.f);
+
+				//Only move if we're far from the target
+
+				float x = std::abs(cameraCenter.x - targetCenter.x);
+				float z = std::abs(cameraCenter.z - targetCenter.z);
+
+				if(x > 7.f)
+				{
+					translation.x = cameraCenter.x > targetCenter.x ? -.1f : .1f;
+				}
+
+				if(z > 7.f)
+				{
+					translation.z = cameraCenter.z > targetCenter.z ? -.1f : .1f;
+				}
+
+				//TODO: use epsilon to check if floats are zeroed, this is bad practice 
+				if(translation.x == 0.f && translation.z == 0.f)
+				{
+					return;
+				}
+
+				scene.getComponent<TransformComponent>(entityUID).addTranslation(translation);
+			});
+
+			scene.getComponent<TriggerComponent>(entityUID).addTrigger(trigger);
 		});
 
 		//Floor
@@ -75,6 +146,7 @@ const SceneConfig SceneDefinitions::initSceneConfig(SceneEnum scene)
 		player.addInitFn([](int entityUID, Scene& scene)
 		{
 			scene.getComponent<TransformComponent>(entityUID).setTranslation({ 2.5f,-2.9f,-5.f });
+			scene.setCameraTargetEntity(entityUID);
 		});
 
 		//Campfire
@@ -136,7 +208,7 @@ const SceneConfig SceneDefinitions::initSceneConfig(SceneEnum scene)
 		for(size_t i=0; i < 25; i++)
 		{
 			x += 3.5f + (rand() % 2) * .15f;
-			float y = -3.f + (rand() % 2) * .5f; 
+			float y = -4.f + (rand() % 2) * .5f; 
 
 			auto tree = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::TREE_2));
 			tree.addInitFn([x,y](int entityUID, Scene& scene)
@@ -152,7 +224,7 @@ const SceneConfig SceneDefinitions::initSceneConfig(SceneEnum scene)
 		for(size_t i=0; i < 25; i++)
 		{
 			x += 3.f + (rand() % 2) * .15f;
-			float y = -3.f + (rand() % 2) * .5f; 
+			float y = -4.f + (rand() % 2) * .5f; 
 
 			auto tree = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::TREE_2));
 			tree.addInitFn([x,y](int entityUID, Scene& scene)
@@ -188,7 +260,6 @@ const SceneConfig SceneDefinitions::initSceneConfig(SceneEnum scene)
 			TextConfig config;
 			config.textToDisplay = "click to begin";
 			config.centered = true;
-			config.animated = true;
 			config.margin = { .05f,.05f };
 			config.fontSize = 5;
 			scene.loadText(config, entityUID);
