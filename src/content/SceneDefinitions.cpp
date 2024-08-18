@@ -50,110 +50,42 @@ const SceneConfig SceneDefinitions::initSceneConfig(SceneEnum scene)
 	{
 	case(SceneEnum::LEVEL_1):
 	{
-		auto camera = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::FLOOR));
-		camera.addInitFn([](int entityUID, auto& scene)
-		{
-			scene.getComponent<TransformComponent>(entityUID).setScale({.1f,.1f,.1f});
-			scene.getComponent<TransformComponent>(entityUID).setTranslation({ 0.f,-4.15f,0.f }); //Will be updated.
-			scene.setCameraEntity(entityUID);
-			scene.addComponent<TriggerComponent>(entityUID);
-
-			Trigger trigger;
-			trigger.setUpdateCondition([](Scene& scene, int entityUID, float lifetime, float elapsedTime)
-			{
-				auto cameraTargetEntity = scene.getCameraTargetEntity();
-
-				if(!cameraTargetEntity.has_value())
-				{
-					return false;
-				}
-
-				if(!scene.hasComponent<TransformComponent>(cameraTargetEntity.value()))
-				{
-					return false;
-				}
-
-				return true;
-			});
-			trigger.setAction([](Scene& scene, int entityUID)
-			{
-				auto cameraTargetEntity = scene.getCameraTargetEntity();
-
-				if(!cameraTargetEntity.has_value())
-				{
-					return;
-				}
-
-				if(!scene.hasComponent<TransformComponent>(cameraTargetEntity.value()))
-				{
-					return;
-				}
-
-				//Use the transforms to determine how far apart the camera is from its target
-				//NB: this assumes that neither the camera or the camera target are children in the scene graph - this should be fixed later
-				const glm::mat4& cameraWorldMat = scene.getComponent<TransformComponent>(entityUID).getWorldMatrix();
-				const TransformComponent& targetTC = scene.getComponent<TransformComponent>(cameraTargetEntity.value());
-				const glm::mat4& targetWorldMat = targetTC.getWorldMatrix();
-
-				glm::vec4 cameraCenter = glm::vec4(1.0);
-
-				//Find a point that we want the camera to go to. This point should be pointing at the side of the target.
-
-				//This point is in coordinates local to the player model
-				//TODO: fix coupling
-				glm::vec4 targetCenter = glm::vec4(.25f,0.f,-2.f,1.f);
-
-				cameraCenter = cameraWorldMat * cameraCenter;
-				targetCenter = targetWorldMat * targetCenter;
-
-				glm::vec3 translation = glm::vec3(0.f,0.f,0.f);
-
-				//Only move if we're far from the target
-				float x = std::abs(cameraCenter.x - targetCenter.x);
-				float z = std::abs(cameraCenter.z - targetCenter.z);
-
-				constexpr float cameraSpeed = .15f;
-				if(x > .55f)
-				{
-					translation.x = cameraCenter.x > targetCenter.x ? -cameraSpeed : cameraSpeed;
-				}
-
-				if(z > .55f)
-				{
-					//TODO
-					//translation.z = cameraCenter.z > targetCenter.z ? -cameraSpeed : cameraSpeed;
-				}
-
-				//TODO: use epsilon to check if floats are zeroed, this is bad practice 
-				if(translation.x == 0.f && translation.z == 0.f)
-				{
-					return;
-				}
-
-				scene.getComponent<TransformComponent>(entityUID).addTranslation(translation);
-			});
-
-			scene.getComponent<TriggerComponent>(entityUID).addTrigger(trigger);
-		});
-
 		//Floor
 		auto floor = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::FLOOR));
 		floor.addInitFn([](int entityUID, Scene& scene)
 		{
 			scene.getComponent<TransformComponent>(entityUID).setTranslation({ 0.f,-55.f,0.f });
+			scene.getComponent<TransformComponent>(entityUID).setScale({ 500.f,100.f,500.f });
 		});
 
-		auto skybox= config.addEntity(GameEntityDefinitions::get(GameEntityEnum::SKYBOX));
+		//Skybox
+		auto skybox = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::SKYBOX));
 		skybox.addInitFn([](int entityUID, Scene& scene)
 		{
 			scene.getComponent<TransformComponent>(entityUID).setTranslation({ 0.f,-8.f,-20.f });
+			scene.getComponent<TransformComponent>(entityUID).setScale({ 500.f,100.f,500.f });
 		});
 
+		//Player
 		auto player = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::PLAYER));
 		player.addInitFn([](int entityUID, Scene& scene)
 		{
-			scene.getComponent<TransformComponent>(entityUID).setTranslation({ 0.f,-4.9f,-6.f });
+			scene.getComponent<TransformComponent>(entityUID).setTranslation({ 0.f,-4.8f,-2.f });
+		});
+
+		auto cameraTarget = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::INVISIBLE_ENTITY));
+		cameraTarget.addInitFn([player](int entityUID, Scene& scene)
+		{
+			scene.addChild(player.entityUID,entityUID);
+			scene.getComponent<TransformComponent>(entityUID).setTranslation({ 0.f,.75f,0.f });
 			scene.setCameraTargetEntity(entityUID);
+		});
+
+		//Follow Camera
+		auto camera = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::FOLLOW_CAMERA));
+		camera.addInitFn([player](int entityUID, Scene& scene)
+		{
+			scene.getComponent<TransformComponent>(entityUID).setTranslation({ 0.f,0.f,3.f });
 		});
 
 		//Campfire
@@ -210,36 +142,51 @@ const SceneConfig SceneDefinitions::initSceneConfig(SceneEnum scene)
 		}
 
 		//Trees
-		x = -25.f;
-
-		for(size_t i=0; i < 25; i++)
+		for(size_t j=0; j < 4; j++)
 		{
-			x += 3.5f + (rand() % 2) * .15f;
-			float y = -5.f - (rand() % 2) * .5f; 
-
-			auto tree = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::TREE_2));
-			tree.addInitFn([x,y](int entityUID, Scene& scene)
+			for(size_t i=0; i < 100; i++)
 			{
-				float scaleFactor = 1.5f + ((rand() % 2) * .15f);
-				scene.getComponent<TransformComponent>(entityUID).setTranslation({x,y,-10.f });
-				scene.getComponent<TransformComponent>(entityUID).setScale({scaleFactor,scaleFactor,scaleFactor});
-			});
+				float x = -100.f + (i * 5.f) + (rand() % 2) * 2.f;
+				float y = -5.f - (rand() % 2) * .5f; 
+				float z = -8.f + (j * -4.f) - ((rand() % 2) * 10.f);
+
+				if(rand() % 2 == 0)
+				{
+					continue;
+				}
+
+				auto tree = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::TREE_2));
+				tree.addInitFn([x,y,z](int entityUID, Scene& scene)
+				{
+					float scaleFactor = 1.5f + ((rand() % 2) * .15f);
+					scene.getComponent<TransformComponent>(entityUID).setTranslation({x,y,z });
+					scene.getComponent<TransformComponent>(entityUID).setScale({scaleFactor,scaleFactor,scaleFactor});
+				});
+			}
 		}
 
-		x = -25.f;
-
-		for(size_t i=0; i < 25; i++)
+		//Trees
+		for(size_t j=0; j < 4; j++)
 		{
-			x += 3.f + (rand() % 2) * .15f;
-			float y = -5.f - (rand() % 2) * .5f; 
-
-			auto tree = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::TREE_2));
-			tree.addInitFn([x,y](int entityUID, Scene& scene)
+			for(size_t i=0; i < 50; i++)
 			{
-				float scaleFactor = 1.25f + ((rand() % 2) * .15f);
-				scene.getComponent<TransformComponent>(entityUID).setTranslation({x,y,-8.f });
-				scene.getComponent<TransformComponent>(entityUID).setScale({scaleFactor,scaleFactor,scaleFactor});
-			});
+				float x = -100.f + (i * 5.f) + (rand() % 2) * 2.f;
+				float y = -5.f - (rand() % 2) * .5f; 
+				float z = 5.5f + (j * + 4.f) + ((rand() % 2) * 10.f);
+
+				if(rand() % 2 == 0)
+				{
+					continue;
+				}
+
+				auto tree = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::TREE_2));
+				tree.addInitFn([x,y,z](int entityUID, Scene& scene)
+				{
+					float scaleFactor = 1.5f + ((rand() % 2) * .15f);
+					scene.getComponent<TransformComponent>(entityUID).setTranslation({x,y,z });
+					scene.getComponent<TransformComponent>(entityUID).setScale({scaleFactor,scaleFactor,scaleFactor});
+				});
+			}
 		}
 
 		break;
@@ -293,7 +240,7 @@ const SceneConfig SceneDefinitions::initSceneConfig(SceneEnum scene)
 			{
 				if (!scene.hasComponent<InputComponent>(entityUID))
 				{
-					return false;
+					return;
 				}
 				
 				std::optional<glm::vec2> coords = scene.getComponent<InputComponent>(entityUID).getInputActionWindowCoordinates(UserInputActionsEnum::LEFT_CLICKING);

@@ -15,10 +15,9 @@ namespace GameEntities
 	static const GameEntityConfig INVISIBLE_ENTITY = GameEntityConfig()
 		.whenInit([](int entityUID, auto& scene)
 		{
-			//Has an extremely small default model at scale 1,1
 			ModelConfig model;
-			model.keyframeFilePaths = { "../img/tiny_cube.obj" };
 			scene.loadModel(model, entityUID);
+			scene.setEntityActiveStatus(entityUID,false);
 		});
 
 	static const GameEntityConfig TITLE_TEXT = GameEntityConfig()
@@ -72,6 +71,79 @@ namespace GameEntities
 			scene.getComponent<TransformComponent>(entityUID).setScale({ 2.f,2.f,2.f});
 			scene.addComponent<InputComponent>(entityUID);
 		});
+	
+	static const GameEntityConfig FOLLOW_CAMERA = GameEntityConfig()
+		.whenInit([](int entityUID, auto& scene)
+		{
+			ModelConfig model;
+			scene.loadModel(model, entityUID);
+			scene.setCameraEntity(entityUID);
+			scene.addComponent<TriggerComponent>(entityUID);
+
+			Trigger trigger;
+			trigger.setUpdateCondition([](Scene& scene, int entityUID, float lifetime, float elapsedTime)
+			{
+				auto cameraTargetEntity = scene.getCameraTargetEntity();
+
+				if(!cameraTargetEntity.has_value())
+				{
+					return false;
+				}
+
+				if(!scene.hasComponent<TransformComponent>(cameraTargetEntity.value()))
+				{
+					return false;
+				}
+
+				return true;
+			});
+			trigger.setAction([](Scene& scene, int entityUID)
+			{
+				auto cameraTargetEntity = scene.getCameraTargetEntity();
+
+				if(!cameraTargetEntity.has_value())
+				{
+					return;
+				}
+
+				if(!scene.hasComponent<TransformComponent>(cameraTargetEntity.value()))
+				{
+					return;
+				}
+
+				//Use the transforms to determine how far apart the camera is from its target
+				//NB: this might assume that neither the camera or the camera target are children in the scene graph - this should be fixed later if needed
+				const glm::mat4& cameraWorldMat = scene.getComponent<TransformComponent>(entityUID).getWorldMatrix();
+				const glm::mat4& targetWorldMat = scene.getComponent<TransformComponent>(cameraTargetEntity.value()).getWorldMatrix();
+
+				glm::vec4 cameraCenter = cameraWorldMat * glm::vec4(1.0);
+				glm::vec4 targetCenter = targetWorldMat * glm::vec4(1.0);
+
+				//Only move if we're far from the target
+				float x = std::abs(cameraCenter.x - targetCenter.x);
+				float y = std::abs(cameraCenter.y - targetCenter.y);
+
+				constexpr float cameraBaseSpeed = .015f;
+
+				if(x <= 0.f && y <= 0.f)
+				{
+					//Already close enough.
+					return;
+				}
+
+				//Speed up the further we are from our target.
+				//This creates a nice "drift and settle" when the camera is close
+				float xCameraSpeed = cameraBaseSpeed * x;
+				float yCameraSpeed = cameraBaseSpeed * y;
+
+				glm::vec3 translation = glm::vec3(0.f,0.f,0.f);
+				translation.x = x <= 0.f? translation.x : (cameraCenter.x > targetCenter.x ? -xCameraSpeed : xCameraSpeed);
+				translation.y = y <= 0.f ? translation.y : (cameraCenter.y > targetCenter.y ? -yCameraSpeed : yCameraSpeed);
+				scene.getComponent<TransformComponent>(entityUID).addTranslation(translation);
+			});
+
+			scene.getComponent<TriggerComponent>(entityUID).addTrigger(trigger);
+		});
 
 	static const GameEntityConfig FLOOR = GameEntityConfig()
 		.whenInit([](int entityUID, auto& scene)
@@ -82,7 +154,6 @@ namespace GameEntities
 			model.keyframeFilePaths = { "../img/cube.obj" };
 
 			scene.loadModel(model, entityUID);
-			scene.getComponent<TransformComponent>(entityUID).setScale({ 100.f,100.f,100.f });
 		});
 	static const GameEntityConfig SKYBOX = GameEntityConfig()
 		.whenInit([](int entityUID, auto& scene)
@@ -93,7 +164,6 @@ namespace GameEntities
 			model.keyframeFilePaths = { "../img/cube.obj" };
 
 			scene.loadModel(model, entityUID);
-			scene.getComponent<TransformComponent>(entityUID).setScale({ 100.f,100.f,100.f });
 		});
 
 	static const GameEntityConfig BUSH = GameEntityConfig()
@@ -422,7 +492,9 @@ const GameEntityConfig& GameEntityDefinitions::get(GameEntityEnum gameEntity)
 		case(GameEntityEnum::SKYBOX):
 			return GameEntities::SKYBOX;
 		case(GameEntityEnum::INVISIBLE_ENTITY):
-		return GameEntities::INVISIBLE_ENTITY;
+			return GameEntities::INVISIBLE_ENTITY;
+		case(GameEntityEnum::FOLLOW_CAMERA):
+			return GameEntities::FOLLOW_CAMERA;
 		default:
 			return GameEntities::BUSH; //quote unqoute
 	}

@@ -1,3 +1,5 @@
 extern/*
 build_files/*
 .vscode/*
+out/*
+.vs/*

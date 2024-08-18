@@ -15,7 +15,8 @@ enum class GameEntityEnum
 	LOG,
 	FIRE,
 	SMOKE,
-	INVISIBLE_ENTITY
+	INVISIBLE_ENTITY,
+	FOLLOW_CAMERA,
 };
 
 struct GameEntityConfig;
