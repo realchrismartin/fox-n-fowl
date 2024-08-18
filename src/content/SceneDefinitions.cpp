@@ -54,7 +54,7 @@ const SceneConfig SceneDefinitions::initSceneConfig(SceneEnum scene)
 		camera.addInitFn([](int entityUID, auto& scene)
 		{
 			scene.getComponent<TransformComponent>(entityUID).setScale({.1f,.1f,.1f});
-			scene.getComponent<TransformComponent>(entityUID).setTranslation({ 0.f,0.f,5.f });
+			scene.getComponent<TransformComponent>(entityUID).setTranslation({ 0.f,-4.15f,0.f }); //Will be updated.
 			scene.setCameraEntity(entityUID);
 			scene.addComponent<TriggerComponent>(entityUID);
 
@@ -92,10 +92,16 @@ const SceneConfig SceneDefinitions::initSceneConfig(SceneEnum scene)
 				//Use the transforms to determine how far apart the camera is from its target
 				//NB: this assumes that neither the camera or the camera target are children in the scene graph - this should be fixed later
 				const glm::mat4& cameraWorldMat = scene.getComponent<TransformComponent>(entityUID).getWorldMatrix();
-				const glm::mat4& targetWorldMat = scene.getComponent<TransformComponent>(cameraTargetEntity.value()).getWorldMatrix();
+				const TransformComponent& targetTC = scene.getComponent<TransformComponent>(cameraTargetEntity.value());
+				const glm::mat4& targetWorldMat = targetTC.getWorldMatrix();
 
 				glm::vec4 cameraCenter = glm::vec4(1.0);
-				glm::vec4 targetCenter = glm::vec4(1.0);
+
+				//Find a point that we want the camera to go to. This point should be pointing at the side of the target.
+
+				//This point is in coordinates local to the player model
+				//TODO: fix coupling
+				glm::vec4 targetCenter = glm::vec4(.25f,0.f,-2.f,1.f);
 
 				cameraCenter = cameraWorldMat * cameraCenter;
 				targetCenter = targetWorldMat * targetCenter;
@@ -103,18 +109,19 @@ const SceneConfig SceneDefinitions::initSceneConfig(SceneEnum scene)
 				glm::vec3 translation = glm::vec3(0.f,0.f,0.f);
 
 				//Only move if we're far from the target
-
 				float x = std::abs(cameraCenter.x - targetCenter.x);
 				float z = std::abs(cameraCenter.z - targetCenter.z);
 
-				if(x > 7.f)
+				constexpr float cameraSpeed = .15f;
+				if(x > .55f)
 				{
-					translation.x = cameraCenter.x > targetCenter.x ? -.1f : .1f;
+					translation.x = cameraCenter.x > targetCenter.x ? -cameraSpeed : cameraSpeed;
 				}
 
-				if(z > 7.f)
+				if(z > .55f)
 				{
-					translation.z = cameraCenter.z > targetCenter.z ? -.1f : .1f;
+					//TODO
+					//translation.z = cameraCenter.z > targetCenter.z ? -cameraSpeed : cameraSpeed;
 				}
 
 				//TODO: use epsilon to check if floats are zeroed, this is bad practice 
@@ -145,7 +152,7 @@ const SceneConfig SceneDefinitions::initSceneConfig(SceneEnum scene)
 		auto player = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::PLAYER));
 		player.addInitFn([](int entityUID, Scene& scene)
 		{
-			scene.getComponent<TransformComponent>(entityUID).setTranslation({ 2.5f,-2.9f,-5.f });
+			scene.getComponent<TransformComponent>(entityUID).setTranslation({ 0.f,-4.9f,-6.f });
 			scene.setCameraTargetEntity(entityUID);
 		});
 
@@ -154,7 +161,7 @@ const SceneConfig SceneDefinitions::initSceneConfig(SceneEnum scene)
 		campfire.addInitFn([](int entityUID, Scene& scene)
 		{
 			scene.getComponent<TransformComponent>(entityUID).setScale({2.f,2.f,2.f});
-			scene.getComponent<TransformComponent>(entityUID).setTranslation({ 2.5f,-2.9f,-5.f });
+			scene.getComponent<TransformComponent>(entityUID).setTranslation({ 2.5f,-4.5f,-5.f });
 		});
 
 		auto log = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::LOG));
@@ -190,7 +197,7 @@ const SceneConfig SceneDefinitions::initSceneConfig(SceneEnum scene)
 		for(size_t i=0; i < 5; i++)
 		{
 			x += (((rand() % 3) * .3f) + 2.5f);
-			const float y = -3.f + (rand() % 2) * .1f; 
+			const float y = -5.2f + (rand() % 2) * .1f; 
 			const float z = -4.f + (rand() % 2) * .1f; 
 
 			auto mushroom = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::MUSHROOM));
@@ -208,7 +215,7 @@ const SceneConfig SceneDefinitions::initSceneConfig(SceneEnum scene)
 		for(size_t i=0; i < 25; i++)
 		{
 			x += 3.5f + (rand() % 2) * .15f;
-			float y = -4.f + (rand() % 2) * .5f; 
+			float y = -5.f - (rand() % 2) * .5f; 
 
 			auto tree = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::TREE_2));
 			tree.addInitFn([x,y](int entityUID, Scene& scene)
@@ -224,7 +231,7 @@ const SceneConfig SceneDefinitions::initSceneConfig(SceneEnum scene)
 		for(size_t i=0; i < 25; i++)
 		{
 			x += 3.f + (rand() % 2) * .15f;
-			float y = -4.f + (rand() % 2) * .5f; 
+			float y = -5.f - (rand() % 2) * .5f; 
 
 			auto tree = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::TREE_2));
 			tree.addInitFn([x,y](int entityUID, Scene& scene)
