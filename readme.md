@@ -47,3 +47,5 @@ This project uses a few Creative Commons licensed resources. Attributions for th
 This work is based on "Low Poly Nature Free ✓" (https://sketchfab.com/3d-models/low-poly-nature-free-b9b9d627d62b46418ba61de1cc1df557) by _Alexandr (https://sketchfab.com/a_l_e_x_a_n_d_e_r) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
 
 This work is based on "Collection with 17 Animals" (https://sketchfab.com/3d-models/collection-with-17-animals-9d27c353c65e46409d29170449925b8f by Jungle Jim (https://sketchfab.com/jungle_jim) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+
+This work is based on "Lowpoly birds" (https://sketchfab.com/3d-models/lowpoly-birds-42866166bff446fb9e089137cc340355) by Loïc Norgeot (https://sketchfab.com/norgeotloic) licensed under CC-BY-SA-4.0 (http://creativecommons.org/licenses/by-sa/4.0/)
