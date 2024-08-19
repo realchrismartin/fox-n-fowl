@@ -6,9 +6,8 @@
   Isometric 3D wildlife-centric side-scrolling game!
   </p>
 
+  ![screenshot](img/preview.gif)
 </div>
-
-![screenshot](img/preview.gif)
 
 # Table of Contents
 
