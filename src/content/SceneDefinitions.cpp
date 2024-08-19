@@ -89,11 +89,13 @@ const SceneConfig SceneDefinitions::initSceneConfig(SceneEnum scene)
 			scene.getComponent<TransformComponent>(entityUID).setTranslation({ 0.f,0.f,2.5f });
 		});
 
+  /*
 		auto racc = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::RACCOON));
 		racc.addInitFn([](int entityUID, Scene& scene)
 		{
 			scene.getComponent<TransformComponent>(entityUID).setTranslation({ -2.f,-4.8f,-4.f });
 		});
+  */
 
 		//Campfire
 		auto campfire = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::INVISIBLE_ENTITY));
