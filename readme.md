@@ -19,7 +19,7 @@
 
 ## About the Project
 
-Fox n' Fowl (FnF) is an isometric 3d side-scrolling game implemented using [fox-engine](https://github.com/realchrismartin/fox-engine). This project was started as an excuse to develop a new game engine using some of my learnings from working on other game engines.
+Fox n' Fowl is an isometric 3d side-scrolling game implemented using [fox-engine](https://github.com/realchrismartin/fox-engine). This project was started as an excuse to develop a new game engine using some of my learnings from working on other game engines.
 
 This repository contains the game content. 
 

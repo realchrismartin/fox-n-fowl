@@ -47,8 +47,6 @@ namespace GameEntities
 	static const GameEntityConfig RACCOON = GameEntityConfig()
 		.whenInit([](int entityUID, auto& scene)
 		{
-			scene.addComponent<InputComponent>(entityUID);
-
 			ModelConfig model;
 			model.spriteSize = { 410,410 };
 			model.spriteOffsetOnTexture = { 2090,0 };

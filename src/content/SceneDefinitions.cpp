@@ -67,7 +67,7 @@ const SceneConfig SceneDefinitions::initSceneConfig(SceneEnum scene)
 		});
 
 		//Player
-		auto player = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::RACCOON));
+		auto player = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::GOOSE));
 		player.addInitFn([](int entityUID, Scene& scene)
 		{
 			scene.addComponent<InputComponent>(entityUID);
@@ -86,12 +86,11 @@ const SceneConfig SceneDefinitions::initSceneConfig(SceneEnum scene)
 		auto camera = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::FOLLOW_CAMERA));
 		camera.addInitFn([player](int entityUID, Scene& scene)
 		{
-			scene.getComponent<TransformComponent>(entityUID).setTranslation({ 0.f,0.f,3.f });
+			scene.getComponent<TransformComponent>(entityUID).setTranslation({ 0.f,0.f,2.5f });
 		});
 
-		//Goose
-		auto goose = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::GOOSE));
-		goose.addInitFn([](int entityUID, Scene& scene)
+		auto racc = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::RACCOON));
+		racc.addInitFn([](int entityUID, Scene& scene)
 		{
 			scene.getComponent<TransformComponent>(entityUID).setTranslation({ -2.f,-4.8f,-4.f });
 		});
