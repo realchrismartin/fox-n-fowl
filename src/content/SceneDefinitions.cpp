@@ -67,9 +67,10 @@ const SceneConfig SceneDefinitions::initSceneConfig(SceneEnum scene)
 		});
 
 		//Player
-		auto player = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::PLAYER));
+		auto player = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::RACCOON));
 		player.addInitFn([](int entityUID, Scene& scene)
 		{
+			scene.addComponent<InputComponent>(entityUID);
 			scene.getComponent<TransformComponent>(entityUID).setTranslation({ 0.f,-4.8f,-2.f });
 		});
 
@@ -86,6 +87,13 @@ const SceneConfig SceneDefinitions::initSceneConfig(SceneEnum scene)
 		camera.addInitFn([player](int entityUID, Scene& scene)
 		{
 			scene.getComponent<TransformComponent>(entityUID).setTranslation({ 0.f,0.f,3.f });
+		});
+
+		//Goose
+		auto goose = config.addEntity(GameEntityDefinitions::get(GameEntityEnum::GOOSE));
+		goose.addInitFn([](int entityUID, Scene& scene)
+		{
+			scene.getComponent<TransformComponent>(entityUID).setTranslation({ -2.f,-4.8f,-4.f });
 		});
 
 		//Campfire

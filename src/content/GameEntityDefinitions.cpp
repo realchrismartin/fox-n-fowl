@@ -44,7 +44,7 @@ namespace GameEntities
 			scene.loadText(config, entityUID);
 		});
 
-	static const GameEntityConfig PLAYER = GameEntityConfig()
+	static const GameEntityConfig RACCOON = GameEntityConfig()
 		.whenInit([](int entityUID, auto& scene)
 		{
 			scene.addComponent<InputComponent>(entityUID);
@@ -66,10 +66,32 @@ namespace GameEntities
 				"../img/racc/racc50.obj" ,
 				"../img/racc/racc55.obj" 
 			};
+			model.frameCount = 100;
 
 			scene.loadModel(model, entityUID);
 			scene.getComponent<TransformComponent>(entityUID).setScale({ 2.f,2.f,2.f});
+		});
+
+	static const GameEntityConfig GOOSE = GameEntityConfig()
+		.whenInit([](int entityUID, auto& scene)
+		{
 			scene.addComponent<InputComponent>(entityUID);
+
+			ModelConfig model;
+			model.spriteSize = { 1024,1024 };
+			model.spriteOffsetOnTexture = { 1066,0 };
+			model.keyframeFilePaths = {
+				"../img/goose/goose0.obj",
+				"../img/goose/goose10.obj" ,
+				"../img/goose/goose20.obj" ,
+				"../img/goose/goose30.obj" ,
+				"../img/goose/goose40.obj" ,
+				"../img/goose/goose50.obj" 
+			};
+			model.frameCount = 100;
+
+			scene.loadModel(model, entityUID);
+			scene.getComponent<TransformComponent>(entityUID).setScale({ 2.f,2.f,2.f});
 		});
 	
 	static const GameEntityConfig FOLLOW_CAMERA = GameEntityConfig()
@@ -471,8 +493,8 @@ const GameEntityConfig& GameEntityDefinitions::get(GameEntityEnum gameEntity)
 			return GameEntities::TITLE_TEXT;
 		case(GameEntityEnum::BUTTON):
 			return GameEntities::BUTTON;
-		case(GameEntityEnum::PLAYER):
-			return GameEntities::PLAYER;
+		case(GameEntityEnum::RACCOON):
+			return GameEntities::RACCOON;
 		case(GameEntityEnum::FLOOR):
 			return GameEntities::FLOOR;
 		case(GameEntityEnum::BUSH):
@@ -495,6 +517,8 @@ const GameEntityConfig& GameEntityDefinitions::get(GameEntityEnum gameEntity)
 			return GameEntities::INVISIBLE_ENTITY;
 		case(GameEntityEnum::FOLLOW_CAMERA):
 			return GameEntities::FOLLOW_CAMERA;
+		case(GameEntityEnum::GOOSE):
+			return GameEntities::GOOSE;
 		default:
 			return GameEntities::BUSH; //quote unqoute
 	}

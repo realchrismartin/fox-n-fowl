@@ -5,7 +5,8 @@ enum class GameEntityEnum
 {
 	TITLE_TEXT,
 	BUTTON,
-	PLAYER,
+	RACCOON,
+	GOOSE,
 	FLOOR,
 	SKYBOX,
 	BUSH,
@@ -16,7 +17,7 @@ enum class GameEntityEnum
 	FIRE,
 	SMOKE,
 	INVISIBLE_ENTITY,
-	FOLLOW_CAMERA,
+	FOLLOW_CAMERA
 };
 
 struct GameEntityConfig;
